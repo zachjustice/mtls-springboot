@@ -1,0 +1,17 @@
+*.iml
+*.classpath
+*.project
+out/
+build/
+
+*.crt
+*.cer
+*.encpem
+*.jks
+*.pfx
+*.pem
+ 
+/**/.gradle/
+/**/.settings/
+/**/.idea/
+/**/target/
