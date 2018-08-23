@@ -3,6 +3,7 @@
 spring.application.name: client
 spring.profiles.active: default
 server.port: 8081
+java.net.debug: handshake
 
 password: Newclient02
 ---

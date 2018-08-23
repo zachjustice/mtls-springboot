@@ -1,4 +1,4 @@
-package ca.oakey.samples.web.clientauth;
+package ca.oakey.samples.web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Application {
 
     public static void main(String[] args) {
+        System.setProperty("javax.net.debug", "ssl");
         SpringApplication.run(Application.class, args);
     }
 

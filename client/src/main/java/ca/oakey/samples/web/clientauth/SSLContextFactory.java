@@ -60,11 +60,12 @@ public class SSLContextFactory {
         return SSLContextBuilder
                 .create()
                 // NOTE sending the wrong cert/providing the wrong keystore should get a `SSLHandshakeException: Received fatal alert: bad_certificate"`
-                .loadKeyMaterial(loadPfx("/" + keystoreFileName, password), password, null)
+                // NOTE aliasStrategy that just returns the `usom-tax` alias gives a 234001 error -- no username presented
+                .loadKeyMaterial(loadPfx("/" + keystoreFileName, password), password,  (a, b) -> "usom-tax")
                 // NOTE commenting loadTrustMaterial out will get a `ValidatorException: PKIX path building failed` error
                 // NOTE not sure how to add .cer to certificate.properties for truststore
                 // NOTE can't use the usom-tax-keystore for truststore. Will get the PKIX ValidatorException error
-                .loadTrustMaterial(keyStore, null)
+                .loadTrustMaterial(keyStore, null) // use for thd version
 //                 .loadTrustMaterial(loadPfx("/" + keystoreFileName, password), null) // use for the self-signed version
                 .build();
     }
