@@ -1,0 +1,26 @@
+#debug=true
+
+spring.application.name: client
+spring.profiles.active: default
+server.port: 8081
+
+password: Newclient02
+---
+spring:
+  profiles: client-nonprod
+
+keystore: client-nonprod.jks
+url: https://localhost:8111/server/
+
+# key-store=classpath:client-nonprod.jks
+# key-store-password=Newclient02
+# key-password=Newclient02
+# trust-store=classpath:client-nonprod.jks
+# trust-store-password=Newclient02
+---
+spring:
+  profiles: usom
+
+keystore: usom-tax-keystore.jks
+url: https://thdapi.homedepot.com/cts/api/v1/sku/productCode/search?sku=218340
+

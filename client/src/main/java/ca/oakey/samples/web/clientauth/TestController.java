@@ -4,6 +4,7 @@ package ca.oakey.samples.web.clientauth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,25 +21,29 @@ import java.util.UUID;
 public class TestController {
     private static final Logger logger = LoggerFactory.getLogger(TestController.class);
 
-    @Autowired
+    private String url;
     private RestTemplate restTemplate;
 
-    /*
-     * Return the authenticated username and roles.
-     */
-    @GetMapping("/whoami")
-    public String whoami() {
+    @Autowired
+    public TestController(
+            @Value("${url}") String url,
+            RestTemplate restTemplate
+    ){
+        this.url = url;
+        this.restTemplate = restTemplate;
+    }
+
+    @GetMapping("/test")
+    public String test() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        // The usom-correlationid is being set as a header by the interceptor so we don't care what this uuid is.
         httpHeaders.set("UUID", UUID.randomUUID().toString());
         httpHeaders.set("api_key", "7ab4c12e-c064-4a49-9538-e75c59175e66");
 
         try {
             return restTemplate.exchange(
-//                    "https://localhost:8111/server/",
-                    "https://thdapi.homedepot.com/cts/api/v1/sku/productCode/search?sku=218340",
+                    url,
                     HttpMethod.GET,
                     new HttpEntity(httpHeaders),
                     String.class

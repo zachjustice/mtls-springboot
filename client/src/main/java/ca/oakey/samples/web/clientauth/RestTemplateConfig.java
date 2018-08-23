@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableAutoConfiguration
-public class Config {
+public class RestTemplateConfig {
 
     @Bean
     public LoggingRequestInterceptor loggingRequestInterceptor() {
@@ -32,11 +32,14 @@ public class Config {
 
         SSLConnectionSocketFactory sslConnectionSocketFactory =
                 new SSLConnectionSocketFactory(sslContextFactory.createSSLContext(), new NoopHostnameVerifier());
-        HttpClient client = HttpClients.custom().setSSLSocketFactory(sslConnectionSocketFactory).build();
+        HttpClient client = HttpClients.custom()
+                .setSSLSocketFactory(sslConnectionSocketFactory)
+                .build();
 
         return builder
-                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(client))
+                // NOTE using the loggingRequestInteceptor with self-signed certs causes  `Attempted read from closed stream.` error
                 .additionalInterceptors(loggingRequestInterceptor)
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory(client))
                 .build();
     }
 

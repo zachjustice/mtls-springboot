@@ -3,6 +3,8 @@ package ca.oakey.samples.web.clientauth;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
@@ -31,9 +33,14 @@ import org.apache.commons.lang3.tuple.Pair;
 public class SSLContextFactory {
     private static final Logger logger = LoggerFactory.getLogger(SSLContextFactory.class);
 
+    private String keystoreFileName;
     private Map<String, String> certs;
 
-    public SSLContextFactory() throws RuntimeException {
+    @Autowired
+    public SSLContextFactory(
+            @Value("${keystore}") String keystoreFileName
+    ){
+        this.keystoreFileName = keystoreFileName;
         Properties props = new Properties();
         try {
             props.load(SSLContextFactory.class.getResourceAsStream("/certificates.properties"));
@@ -46,33 +53,24 @@ public class SSLContextFactory {
     }
 
     public SSLContext createSSLContext() throws Exception {
-        /*
-         * Sample certs use the same password
-         */
         char[] password = "Newclient02".toCharArray();
-//        char[] password = "changeme".toCharArray();
 
-        /*
-         * Create an SSLContext that uses client.jks as the client certificate
-         * and the truststore.jks as the trust material (trusted CA certificates).
-         * In this sample, truststore.jks contains ca.pem which was used to sign
-         * both client.pfx and server.jks.
-         */
         KeyStore keyStore = createKeyStore();
-//        KeyStore keyStore = KeyStore.getInstance("PKCS12");
-//        InputStream in = getClass().getResourceAsStream("/usom-tax-keystore.jks");
-//        keyStore.load(in, password);
 
         return SSLContextBuilder
                 .create()
-//                .loadKeyMaterial(loadPfx("/client-nonprod.jks", password), password, null)
-                .loadKeyMaterial(loadPfx("/usom-tax-keystore.jks", password), password, null)
+                // NOTE sending the wrong cert/providing the wrong keystore should get a `SSLHandshakeException: Received fatal alert: bad_certificate"`
+                .loadKeyMaterial(loadPfx("/" + keystoreFileName, password), password, null)
+                // NOTE commenting loadTrustMaterial out will get a `ValidatorException: PKIX path building failed` error
+                // NOTE not sure how to add .cer to certificate.properties for truststore
+                // NOTE can't use the usom-tax-keystore for truststore. Will get the PKIX ValidatorException error
                 .loadTrustMaterial(keyStore, null)
+//                 .loadTrustMaterial(loadPfx("/" + keystoreFileName, password), null) // use for the self-signed version
                 .build();
     }
 
     private KeyStore loadPfx(String file, char[] password) throws Exception {
-        KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        KeyStore keyStore = KeyStore.getInstance("JKS");
         InputStream in = getClass().getResourceAsStream(file);
         keyStore.load(in, password);
         return keyStore;
