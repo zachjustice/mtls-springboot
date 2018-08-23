@@ -1,10 +1,14 @@
-package com.plumstep.controller;
+package ca.oakey.samples.web.clientauth;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -13,20 +17,16 @@ import java.util.Collections;
 import java.util.UUID;
 
 @RestController
-public class ClientController {
+public class TestController {
+    private static final Logger logger = LoggerFactory.getLogger(TestController.class);
+
     @Autowired
     private RestTemplate restTemplate;
-    private String serverUrl = "https://localhost:8111/server/";
-
-    @RequestMapping(value = "client", method = RequestMethod.GET)
-    ResponseEntity<?> getMessage() {
-	    return restTemplate.getForEntity(serverUrl, String.class);
-    }
 
     /*
      * Return the authenticated username and roles.
      */
-    @GetMapping("/test")
+    @GetMapping("/whoami")
     public String whoami() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -44,7 +44,9 @@ public class ClientController {
                     String.class
             ).getBody();
         } catch (HttpServerErrorException ex) {
+            logger.error(ex.getMessage());
             throw ex;
         }
     }
+
 }

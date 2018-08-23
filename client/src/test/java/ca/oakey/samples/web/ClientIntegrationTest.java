@@ -1,5 +1,6 @@
-package com.plumstep;
+package ca.oakey.samples.web;
 
+import ca.oakey.samples.web.clientauth.Application;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 
 @ActiveProfiles("default")
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = {ClientApplication.class})
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = {Application.class})
 public class ClientIntegrationTest {
 
     @Autowired
