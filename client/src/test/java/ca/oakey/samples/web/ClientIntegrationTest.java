@@ -1,6 +1,5 @@
 package ca.oakey.samples.web;
 
-import ca.oakey.samples.web.clientauth.Application;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
